@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIP Calculator - Financial Calculators</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>SIP Calculator</h1>
+            <p>Systematic Investment Plan Calculator</p>
+        </div>
+        
+        <div class="content">
+            <div class="form-section">
+                <a href="/" class="back-btn">← Back to Home</a>
+                
+                {% if error %}
+                <div class="error-message">
+                    {{ error }}
+                </div>
+                {% endif %}
+                
+                <form method="POST" action="/sip-calculator">
+                    <div class="form-group">
+                        <label for="monthly_investment">Monthly Investment Amount</label>
+                        <div class="input-group">
+                            <input type="number" 
+                                   id="monthly_investment" 
+                                   name="monthly_investment" 
+                                   min="100" 
+                                   step="100" 
+                                   value="{{ results.monthly_investment if results else '' }}" 
+                                   placeholder="5000" 
+                                   required>
+                            <span class="input-suffix">₹</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="annual_return_rate">Expected Annual Return Rate</label>
+                        <div class="input-group">
+                            <input type="number" 
+                                   id="annual_return_rate" 
+                                   name="annual_return_rate" 
+                                   min="1" 
+                                   max="30" 
+                                   step="0.1" 
+                                   value="{{ results.annual_return_rate if results else '' }}" 
+                                   placeholder="12" 
+                                   required>
+                            <span class="input-suffix">%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="investment_period_years">Investment Period</label>
+                        <div class="input-group">
+                            <input type="number" 
+                                   id="investment_period_years" 
+                                   name="investment_period_years" 
+                                   min="1" 
+                                   max="50" 
+                                   step="1" 
+                                   value="{{ results.investment_period_years if results else '' }}" 
+                                   placeholder="10" 
+                                   required>
+                            <span class="input-suffix">Years</span>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="calculate-btn">Calculate SIP Returns</button>
+                </form>
+            </div>
+            
+            <div class="results-section">
+                <h2 class="results-title">Investment Results</h2>
+                
+                {% if results %}
+                    <div class="result-card">
+                        <div class="result-label">Maturity Amount</div>
+                        <div class="result-value">₹{{ "{:,.2f}".format(results.future_value) }}</div>
+                    </div>
+                    
+                    <div class="result-breakdown">
+                        <div class="breakdown-card">
+                            <div class="breakdown-label">Total Investment</div>
+                            <div class="breakdown-value">₹{{ "{:,.2f}".format(results.total_investment) }}</div>
+                        </div>
+                        
+                        <div class="breakdown-card">
+                            <div class="breakdown-label">Total Returns</div>
+                            <div class="breakdown-value">₹{{ "{:,.2f}".format(results.total_returns) }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="result-breakdown">
+                        <div class="breakdown-card">
+                            <div class="breakdown-label">Investment Duration</div>
+                            <div class="breakdown-value">{{ results.investment_period_years }} Years</div>
+                        </div>
+                        
+                        <div class="breakdown-card">
+                            <div class="breakdown-label">Expected Return</div>
+                            <div class="breakdown-value">{{ results.annual_return_rate }}% p.a.</div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="empty-results">
+                        Enter your investment details and click calculate to see projected returns
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

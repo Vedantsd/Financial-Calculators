@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Step-up SIP Calculator - Financial Calculators</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Step-up SIP Calculator</h1>
+            <p>Systematic Investment Plan with Annual Increment</p>
+        </div>
+        
+        <div class="content">
+            <div class="form-section">
+                <a href="/" class="back-btn">← Back to Home</a>
+                
+                {% if error %}
+                <div class="error-message">
+                    {{ error }}
+                </div>
+                {% endif %}
+                
+                <div class="info-tooltip">
+                    <strong>Step-up SIP:</strong>
+                    A Step-up SIP allows you to increase your monthly investment amount by a fixed percentage each year, helping you invest more as your income grows.
+                </div>
+                
+                <form method="POST" action="/stepup-sip-calculator">
+                    <div class="form-group">
+                        <label for="initial_investment">Initial Monthly Investment</label>
+                        <div class="input-group">
+                            <input type="number" 
+                                   id="initial_investment" 
+                                   name="initial_investment" 
+                                   min="100" 
+                                   step="100" 
+                                   value="{{ results.initial_investment if results else '' }}" 
+                                   placeholder="5000" 
+                                   required>
+                            <span class="input-suffix">₹</span>
+                        </div>
+                    </div>
+                    
+                    <div class="step-form-group">
+                        <div class="form-group">
+                            <label for="annual_step_up">Annual Step-up Rate</label>
+                            <div class="input-group">
+                                <input type="number" 
+                                       id="annual_step_up" 
+                                       name="annual_step_up" 
+                                       min="1" 
+                                       max="50" 
+                                       step="1" 
+                                       value="{{ results.annual_step_up if results else '' }}" 
+                                       placeholder="10" 
+                                       required>
+                                <span class="input-suffix">%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="annual_return_rate">Expected Annual Return</label>
+                            <div class="input-group">
+                                <input type="number" 
+                                       id="annual_return_rate" 
+                                       name="annual_return_rate" 
+                                       min="1" 
+                                       max="30" 
+                                       step="0.1" 
+                                       value="{{ results.annual_return_rate if results else '' }}" 
+                                       placeholder="12" 
+                                       required>
+                                <span class="input-suffix">%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="investment_period_years">Investment Period</label>
+                        <div class="input-group">
+                            <input type="number" 
+                                   id="investment_period_years" 
+                                   name="investment_period_years" 
+                                   min="2" 
+                                   max="50" 
+                                   step="1" 
+                                   value="{{ results.investment_period_years if results else '' }}" 
+                                   placeholder="10" 
+                                   required>
+                            <span class="input-suffix">Years</span>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="calculate-btn">Calculate Step-up SIP Returns</button>
+                </form>
+            </div>
+            
+            <div class="results-section">
+                <h2 class="results-title">Investment Results</h2>
+                
+                {% if results %}
+                    <div class="result-card">
+                        <div class="result-label">Maturity Amount</div>
+                        <div class="result-value">₹{{ "{:,.2f}".format(results.future_value) }}</div>
+                    </div>
+                    
+                    <div class="result-breakdown">
+                        <div class="breakdown-card">
+                            <div class="breakdown-label">Total Investment</div>
+                            <div class="breakdown-value">₹{{ "{:,.2f}".format(results.total_investment) }}</div>
+                        </div>
+                        
+                        <div class="breakdown-card">
+                            <div class="breakdown-label">Total Returns</div>
+                            <div class="breakdown-value">₹{{ "{:,.2f}".format(results.total_returns) }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="result-breakdown">
+                        <div class="breakdown-card">
+                            <div class="breakdown-label">Initial Monthly SIP</div>
+                            <div class="breakdown-value">₹{{ "{:,.2f}".format(results.initial_investment) }}</div>
+                        </div>
+                        
+                        <div class="breakdown-card">
+                            <div class="breakdown-label">Final Monthly SIP</div>
+                            <div class="breakdown-value">₹{{ "{:,.2f}".format(results.final_monthly_investment) }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="result-breakdown">
+                        <div class="breakdown-card">
+                            <div class="breakdown-label">Average Monthly SIP</div>
+                            <div class="breakdown-value">₹{{ "{:,.2f}".format(results.avg_monthly_investment) }}</div>
+                        </div>
+                        
+                        <div class="breakdown-card">
+                            <div class="breakdown-label">Annual Step-up</div>
+                            <div class="breakdown-value">{{ results.annual_step_up }}%</div>
+                        </div>
+                    </div>
+                    
+                    <div class="result-breakdown">
+                        <div class="breakdown-card">
+                            <div class="breakdown-label">Investment Duration</div>
+                            <div class="breakdown-value">{{ results.investment_period_years }} Years</div>
+                        </div>
+                        
+                        <div class="breakdown-card">
+                            <div class="breakdown-label">Expected Return</div>
+                            <div class="breakdown-value">{{ results.annual_return_rate }}% p.a.</div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="empty-results">
+                        Enter your step-up SIP details and click calculate to see projected returns
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
