@@ -1,6 +1,6 @@
 # Financial Calculators
 
-A comprehensive web application built with Flask for various financial calculations. Currently features SIP (Systematic Investment Plan) calculators with responsive design optimized for all devices.
+A comprehensive web application built with Flask for various financial calculations. Features SIP (Systematic Investment Plan) and SWP (Systematic Withdrawal Plan) calculators with responsive design optimized for all devices.
 
 ## 🚀 Features
 
@@ -13,6 +13,12 @@ A comprehensive web application built with Flask for various financial calculati
 - Progressive SIP with annual increment feature
 - Year-by-year calculation with step-up growth
 - Advanced analytics including average monthly investment
+
+### 3. **SWP Calculator**
+- Systematic Withdrawal Plan for retirement planning
+- Calculate sustainable withdrawal amounts from investments
+- Month-by-month breakdown with interest calculations
+- Corpus exhaustion warnings and timeline predictions
 
 ## 💻 Technology Stack
 
@@ -38,8 +44,10 @@ Financial Calculators/
 ├── templates/
 │   ├── index.html                  # Home page with calculator tiles
 │   ├── sip-calc.html              # Regular SIP calculator
-│   └── stepup-sip-calc.html       # Step-up SIP calculator
+│   ├── stepup-sip-calc.html       # Step-up SIP calculator
+│   └── swp-calc.html              # SWP calculator
 ├── .gitignore                      # Git ignore file
+├── LICENSE                         # MIT License file
 └── README.md                       # Project documentation
 ```
 
@@ -84,6 +92,14 @@ Financial Calculators/
 - **Advanced Metrics**: Average monthly SIP, final monthly amount
 - **Detailed Analysis**: Year-by-year growth calculation
 
+### SWP Calculator
+- **Initial Investment**: ₹10,000 - unlimited
+- **Monthly Withdrawal**: ₹1,000 - unlimited
+- **Annual Return**: 1% - 30%
+- **Withdrawal Period**: 1 - 50 years
+- **Results**: Total withdrawals, remaining corpus, interest earned
+- **Smart Features**: Corpus exhaustion alerts, monthly breakdown table
+
 ## 🎨 Design Features
 
 - **Modern UI**: Gradient backgrounds and smooth animations
@@ -106,6 +122,13 @@ Financial Calculators/
 - Period: 10 years
 - **Result**: ₹16,87,163 (Total Returns: ₹7,30,918)
 
+### SWP Example:
+- Initial Investment: ₹10,00,000
+- Monthly Withdrawal: ₹15,000
+- Annual Return: 8%
+- Period: 10 years
+- **Result**: Total Withdrawals: ₹18,00,000, Remaining Corpus: ₹4,39,117
+
 ## 🔮 Future Enhancements
 
 - [ ] EMI Calculator
@@ -114,6 +137,8 @@ Financial Calculators/
 - [ ] Investment Comparison Tool
 - [ ] Data Visualization Charts
 - [ ] Export Results to PDF
+- [ ] SWP with Variable Withdrawal Amounts
+- [ ] Inflation-Adjusted Calculations
 
 ## 🤝 Contributing
 
