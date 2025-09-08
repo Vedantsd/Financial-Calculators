@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWP Calculator - Financial Calculators</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>SWP Calculator</h1>
+            <p>Systematic Withdrawal Plan Calculator</p>
+        </div>
+        
+        <div class="content">
+            <div class="form-section">
+                <a href="/" class="back-btn">← Back to Home</a>
+                
+                {% if error %}
+                <div class="error-message">
+                    {{ error }}
+                </div>
+                {% endif %}
+                
+                <form method="POST" action="/swp-calculator">
+                    <div class="form-group">
+                        <label for="initial_investment">Initial Investment Amount</label>
+                        <div class="input-group">
+                            <input type="number" 
+                                   id="initial_investment" 
+                                   name="initial_investment" 
+                                   min="10000" 
+                                   step="1000" 
+                                   value="{{ results.initial_investment if results else '' }}" 
+                                   placeholder="500000" 
+                                   required>
+                            <span class="input-suffix">₹</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="monthly_withdrawal">Monthly Withdrawal Amount</label>
+                        <div class="input-group">
+                            <input type="number" 
+                                   id="monthly_withdrawal" 
+                                   name="monthly_withdrawal" 
+                                   min="1000" 
+                                   step="1000" 
+                                   value="{{ results.monthly_withdrawal if results else '' }}" 
+                                   placeholder="15000" 
+                                   required>
+                            <span class="input-suffix">₹</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="annual_return_rate">Expected Annual Return Rate</label>
+                        <div class="input-group">
+                            <input type="number" 
+                                   id="annual_return_rate" 
+                                   name="annual_return_rate" 
+                                   min="1" 
+                                   max="30" 
+                                   step="0.1" 
+                                   value="{{ results.annual_return_rate if results else '' }}" 
+                                   placeholder="8" 
+                                   required>
+                            <span class="input-suffix">%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="withdrawal_period_years">Withdrawal Period</label>
+                        <div class="input-group">
+                            <input type="number" 
+                                   id="withdrawal_period_years" 
+                                   name="withdrawal_period_years" 
+                                   min="1" 
+                                   max="50" 
+                                   step="1" 
+                                   value="{{ results.withdrawal_period_years if results else '' }}" 
+                                   placeholder="10" 
+                                   required>
+                            <span class="input-suffix">Years</span>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="calculate-btn">Calculate SWP Details</button>
+                </form>
+            </div>
+            
+            <div class="results-section">
+                <h2 class="results-title">Withdrawal Plan Results</h2>
+                
+                {% if results %}
+                    <div class="result-card">
+                        <div class="result-label">Total Withdrawals</div>
+                        <div class="result-value">₹{{ "{:,.2f}".format(results.total_withdrawals) }}</div>
+                    </div>
+                    
+                    <div class="result-breakdown">
+                        <div class="breakdown-card">
+                            <div class="breakdown-label">Remaining Corpus</div>
+                            <div class="breakdown-value">₹{{ "{:,.2f}".format(results.remaining_corpus) }}</div>
+                        </div>
+                        
+                        <div class="breakdown-card">
+                            <div class="breakdown-label">Interest Earned</div>
+                            <div class="breakdown-value">₹{{ "{:,.2f}".format(results.total_interest_earned) }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="result-breakdown">
+                        <div class="breakdown-card">
+                            <div class="breakdown-label">Plan Duration</div>
+                            <div class="breakdown-value">
+                                {% if results.corpus_exhausted %}
+                                    {{ results.years_lasted }} Years (Exhausted)
+                                {% else %}
+                                    {{ results.withdrawal_period_years }} Years
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="breakdown-card">
+                            <div class="breakdown-label">Expected Return</div>
+                            <div class="breakdown-value">{{ results.annual_return_rate }}% p.a.</div>
+                        </div>
+                    </div>
+                    
+                    {% if results.corpus_exhausted %}
+                    <div class="warning-message" style="background: #fff3cd; border: 1px solid #ffeaa7; color: #856404; padding: 10px; border-radius: 8px; margin: 15px 0; text-align: center;">
+                        ⚠️ Warning: Your corpus will be exhausted in {{ results.years_lasted }} years with the current withdrawal rate.
+                    </div>
+                    {% endif %}
+                    
+                    <div class="monthly-breakdown" style="margin-top: 20px;">
+                        <h3 style="color: #333; margin-bottom: 15px;">First Year Monthly Breakdown</h3>
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 0.9em;">
+                                <thead>
+                                    <tr style="background: #f8f9fa;">
+                                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Month</th>
+                                        <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Opening Balance</th>
+                                        <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Interest</th>
+                                        <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Withdrawal</th>
+                                        <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Closing Balance</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for month_data in results.monthly_details %}
+                                    <tr>
+                                        <td style="border: 1px solid #ddd; padding: 8px;">{{ month_data.month }}</td>
+                                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">₹{{ "{:,.0f}".format(month_data.opening_balance) }}</td>
+                                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">₹{{ "{:,.0f}".format(month_data.interest_earned) }}</td>
+                                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">₹{{ "{:,.0f}".format(month_data.withdrawal) }}</td>
+                                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">₹{{ "{:,.0f}".format(month_data.closing_balance) }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="empty-results">
+                        Enter your investment details and click calculate to see your withdrawal plan
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
