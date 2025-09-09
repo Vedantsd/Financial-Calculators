@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMI Calculator - Financial Calculators</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>EMI Calculator</h1>
+            <p>Loan Equated Monthly Installment Calculator</p>
+        </div>
+        
+        <div class="content">
+            <div class="form-section">
+                <a href="/" class="back-btn">← Back to Home</a>
+                
+                {% if error %}
+                <div class="error-message">
+                    {{ error }}
+                </div>
+                {% endif %}
+                
+                <form method="POST" action="/emi-calculator">
+                    <div class="form-group">
+                        <label for="loan_amount">Loan Amount</label>
+                        <div class="input-group">
+                            <input type="number" 
+                                   id="loan_amount" 
+                                   name="loan_amount" 
+                                   min="10000" 
+                                   step="1000" 
+                                   value="{{ results.loan_amount if results else '' }}" 
+                                   placeholder="500000" 
+                                   required>
+                            <span class="input-suffix">₹</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="annual_interest_rate">Annual Interest Rate</label>
+                        <div class="input-group">
+                            <input type="number" 
+                                   id="annual_interest_rate" 
+                                   name="annual_interest_rate" 
+                                   min="1" 
+                                   max="50" 
+                                   step="0.1" 
+                                   value="{{ results.annual_interest_rate if results else '' }}" 
+                                   placeholder="9.5" 
+                                   required>
+                            <span class="input-suffix">%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="loan_tenure_years">Loan Tenure</label>
+                        <div class="input-group">
+                            <input type="number" 
+                                   id="loan_tenure_years" 
+                                   name="loan_tenure_years" 
+                                   min="1" 
+                                   max="30" 
+                                   step="1" 
+                                   value="{{ results.loan_tenure_years if results else '' }}" 
+                                   placeholder="20" 
+                                   required>
+                            <span class="input-suffix">Years</span>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="calculate-btn">Calculate EMI</button>
+                </form>
+            </div>
+            
+            <div class="results-section">
+                <h2 class="results-title">Loan EMI Results</h2>
+                
+                {% if results %}
+                    <div class="result-card">
+                        <div class="result-label">Monthly EMI</div>
+                        <div class="result-value">₹{{ "{:,.2f}".format(results.emi) }}</div>
+                    </div>
+                    
+                    <div class="result-breakdown">
+                        <div class="breakdown-card">
+                            <div class="breakdown-label">Total Payment</div>
+                            <div class="breakdown-value">₹{{ "{:,.2f}".format(results.total_payment) }}</div>
+                        </div>
+                        
+                        <div class="breakdown-card">
+                            <div class="breakdown-label">Total Interest</div>
+                            <div class="breakdown-value">₹{{ "{:,.2f}".format(results.total_interest) }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="result-breakdown">
+                        <div class="breakdown-card">
+                            <div class="breakdown-label">Loan Amount</div>
+                            <div class="breakdown-value">₹{{ "{:,.2f}".format(results.loan_amount) }}</div>
+                        </div>
+                        
+                        <div class="breakdown-card">
+                            <div class="breakdown-label">Loan Tenure</div>
+                            <div class="breakdown-value">{{ results.loan_tenure_years }} Years</div>
+                        </div>
+                    </div>
+                    
+                    <div class="amortization-schedule" style="margin-top: 20px;">
+                        <h3 style="color: #333; margin-bottom: 15px;">First Year Payment Breakdown</h3>
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 0.9em;">
+                                <thead>
+                                    <tr style="background: #f8f9fa;">
+                                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Month</th>
+                                        <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">EMI</th>
+                                        <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Principal</th>
+                                        <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Interest</th>
+                                        <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Balance</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for payment in results.amortization_schedule %}
+                                    <tr>
+                                        <td style="border: 1px solid #ddd; padding: 8px;">{{ payment.month }}</td>
+                                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">₹{{ "{:,.0f}".format(payment.emi) }}</td>
+                                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">₹{{ "{:,.0f}".format(payment.principal) }}</td>
+                                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">₹{{ "{:,.0f}".format(payment.interest) }}</td>
+                                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">₹{{ "{:,.0f}".format(payment.balance) }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="empty-results">
+                        Enter your loan details and click calculate to see EMI breakdown
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

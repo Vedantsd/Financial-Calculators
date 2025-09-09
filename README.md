@@ -1,6 +1,6 @@
 # Financial Calculators
 
-A comprehensive web application built with Flask for various financial calculations. Features SIP (Systematic Investment Plan) and SWP (Systematic Withdrawal Plan) calculators with responsive design optimized for all devices.
+A comprehensive web application built with Flask for various financial calculations. Features SIP (Systematic Investment Plan), SWP (Systematic Withdrawal Plan), and EMI (Equated Monthly Installment) calculators with responsive design optimized for all devices.
 
 ## 🚀 Features
 
@@ -19,6 +19,12 @@ A comprehensive web application built with Flask for various financial calculati
 - Calculate sustainable withdrawal amounts from investments
 - Month-by-month breakdown with interest calculations
 - Corpus exhaustion warnings and timeline predictions
+
+### 4. **EMI Calculator**
+- Loan Equated Monthly Installment calculator
+- Calculate monthly payment for home loans, car loans, personal loans
+- Comprehensive amortization schedule breakdown
+- Principal and interest component analysis
 
 ## 💻 Technology Stack
 
@@ -45,7 +51,8 @@ Financial Calculators/
 │   ├── index.html                  # Home page with calculator tiles
 │   ├── sip-calc.html              # Regular SIP calculator
 │   ├── stepup-sip-calc.html       # Step-up SIP calculator
-│   └── swp-calc.html              # SWP calculator
+│   ├── swp-calc.html              # SWP calculator
+│   └── emi-calc.html              # EMI calculator
 ├── .gitignore                      # Git ignore file
 ├── LICENSE                         # MIT License file
 └── README.md                       # Project documentation
@@ -100,6 +107,13 @@ Financial Calculators/
 - **Results**: Total withdrawals, remaining corpus, interest earned
 - **Smart Features**: Corpus exhaustion alerts, monthly breakdown table
 
+### EMI Calculator
+- **Loan Amount**: ₹10,000 - unlimited
+- **Interest Rate**: 1% - 50% per annum
+- **Loan Tenure**: 1 - 30 years
+- **Results**: Monthly EMI, total payment, total interest
+- **Advanced Features**: Amortization schedule, principal-interest breakdown
+
 ## 🎨 Design Features
 
 - **Modern UI**: Gradient backgrounds and smooth animations
@@ -129,9 +143,14 @@ Financial Calculators/
 - Period: 10 years
 - **Result**: Total Withdrawals: ₹18,00,000, Remaining Corpus: ₹4,39,117
 
+### EMI Example:
+- Loan Amount: ₹25,00,000
+- Interest Rate: 9.5% per annum
+- Loan Tenure: 20 years
+- **Result**: Monthly EMI: ₹23,290, Total Payment: ₹55,89,600, Total Interest: ₹30,89,600
+
 ## 🔮 Future Enhancements
 
-- [ ] EMI Calculator
 - [ ] PPF Calculator
 - [ ] Tax Calculator
 - [ ] Investment Comparison Tool

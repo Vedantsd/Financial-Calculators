@@ -179,5 +179,63 @@ def swp_calc():
     
     return render_template('swp-calc.html')
 
+@app.route('/emi-calculator', methods=['GET', 'POST'])
+def emi_calc():
+    if request.method == 'POST':
+        try:
+            loan_amount = float(request.form['loan_amount'])
+            annual_interest_rate = float(request.form['annual_interest_rate'])
+            loan_tenure_years = int(request.form['loan_tenure_years'])
+            
+            monthly_interest_rate = annual_interest_rate / (12 * 100)
+            total_months = loan_tenure_years * 12
+            
+            if monthly_interest_rate > 0:
+                emi = (loan_amount * monthly_interest_rate * ((1 + monthly_interest_rate) ** total_months)) / (((1 + monthly_interest_rate) ** total_months) - 1)
+            else:
+                emi = loan_amount / total_months
+            
+            total_payment = emi * total_months
+            total_interest = total_payment - loan_amount
+            
+            amortization_schedule = []
+            remaining_principal = loan_amount
+            
+            for month in range(1, min(13, total_months + 1)):
+                if monthly_interest_rate > 0:
+                    interest_component = remaining_principal * monthly_interest_rate
+                    principal_component = emi - interest_component
+                else:
+                    interest_component = 0
+                    principal_component = emi
+                
+                remaining_principal -= principal_component
+                
+                amortization_schedule.append({
+                    'month': month,
+                    'emi': emi,
+                    'principal': principal_component,
+                    'interest': interest_component,
+                    'balance': max(0, remaining_principal)
+                })
+            
+            results = {
+                'loan_amount': loan_amount,
+                'annual_interest_rate': annual_interest_rate,
+                'loan_tenure_years': loan_tenure_years,
+                'emi': round(emi, 2),
+                'total_payment': round(total_payment, 2),
+                'total_interest': round(total_interest, 2),
+                'amortization_schedule': amortization_schedule
+            }
+            
+            return render_template('emi-calc.html', results=results)
+            
+        except (ValueError, KeyError) as e:
+            error_message = "Please enter valid numeric values for all fields."
+            return render_template('emi-calc.html', error=error_message)
+    
+    return render_template('emi-calc.html')
+
 if __name__ == ("__main__"):
     app.run(debug=True)
