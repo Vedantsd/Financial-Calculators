@@ -118,44 +118,50 @@ def swp_calc():
             
             remaining_corpus = initial_investment
             total_withdrawals = 0
-            monthly_details = []
+            yearly_details = []
             
-            for month in range(1, total_months + 1):
-                # Calculate interest for the month
-                if monthly_return_rate > 0:
-                    monthly_interest = remaining_corpus * monthly_return_rate
-                    remaining_corpus += monthly_interest
-                else:
-                    monthly_interest = 0
+            for year in range(1, withdrawal_period_years + 1):
+                year_opening_balance = remaining_corpus
+                year_total_withdrawals = 0
+                year_total_interest = 0
                 
-                # Withdraw the monthly amount
-                if remaining_corpus >= monthly_withdrawal:
-                    remaining_corpus -= monthly_withdrawal
-                    total_withdrawals += monthly_withdrawal
-                    actual_withdrawal = monthly_withdrawal
-                else:
-                    # If remaining corpus is less than withdrawal amount
-                    actual_withdrawal = remaining_corpus
-                    total_withdrawals += actual_withdrawal
-                    remaining_corpus = 0
+                for month in range(12):
+                    if remaining_corpus <= 0:
+                        break
+                        
+                    if monthly_return_rate > 0:
+                        monthly_interest = remaining_corpus * monthly_return_rate
+                        remaining_corpus += monthly_interest
+                        year_total_interest += monthly_interest
+                    else:
+                        monthly_interest = 0
+                    
+                    if remaining_corpus >= monthly_withdrawal:
+                        remaining_corpus -= monthly_withdrawal
+                        total_withdrawals += monthly_withdrawal
+                        year_total_withdrawals += monthly_withdrawal
+                        actual_withdrawal = monthly_withdrawal
+                    else:
+                        actual_withdrawal = remaining_corpus
+                        total_withdrawals += actual_withdrawal
+                        year_total_withdrawals += actual_withdrawal
+                        remaining_corpus = 0
                 
-                monthly_details.append({
-                    'month': month,
-                    'opening_balance': remaining_corpus + actual_withdrawal - (monthly_interest if monthly_return_rate > 0 else 0),
-                    'interest_earned': monthly_interest if monthly_return_rate > 0 else 0,
-                    'withdrawal': actual_withdrawal,
+                yearly_details.append({
+                    'year': year,
+                    'opening_balance': year_opening_balance,
+                    'total_withdrawals': year_total_withdrawals,
+                    'total_interest': year_total_interest,
                     'closing_balance': remaining_corpus
                 })
                 
-                # If corpus is exhausted, break
                 if remaining_corpus <= 0:
                     break
             
             total_interest_earned = total_withdrawals + remaining_corpus - initial_investment
             
-            # Calculate how long the corpus will last
-            months_lasted = len(monthly_details)
-            years_lasted = months_lasted / 12
+            months_lasted = sum(1 for year_data in yearly_details for _ in range(12) if year_data['closing_balance'] > 0 or year_data['year'] == yearly_details[0]['year'])
+            years_lasted = len(yearly_details)
             
             results = {
                 'initial_investment': initial_investment,
@@ -168,7 +174,7 @@ def swp_calc():
                 'months_lasted': months_lasted,
                 'years_lasted': round(years_lasted, 2),
                 'corpus_exhausted': remaining_corpus <= 0,
-                'monthly_details': monthly_details[:12]  # Show first 12 months only
+                'yearly_details': yearly_details
             }
             
             return render_template('swp-calc.html', results=results)
@@ -198,25 +204,38 @@ def emi_calc():
             total_payment = emi * total_months
             total_interest = total_payment - loan_amount
             
-            amortization_schedule = []
+            yearly_schedule = []
             remaining_principal = loan_amount
             
-            for month in range(1, min(13, total_months + 1)):
-                if monthly_interest_rate > 0:
-                    interest_component = remaining_principal * monthly_interest_rate
-                    principal_component = emi - interest_component
-                else:
-                    interest_component = 0
-                    principal_component = emi
+            for year in range(1, loan_tenure_years + 1):
+                year_opening_balance = remaining_principal
+                year_total_emi = 0
+                year_total_principal = 0
+                year_total_interest = 0
                 
-                remaining_principal -= principal_component
+                for month in range(12):
+                    if remaining_principal <= 0:
+                        break
+                        
+                    if monthly_interest_rate > 0:
+                        interest_component = remaining_principal * monthly_interest_rate
+                        principal_component = emi - interest_component
+                    else:
+                        interest_component = 0
+                        principal_component = emi
+                    
+                    remaining_principal -= principal_component
+                    year_total_emi += emi
+                    year_total_principal += principal_component
+                    year_total_interest += interest_component
                 
-                amortization_schedule.append({
-                    'month': month,
-                    'emi': emi,
-                    'principal': principal_component,
-                    'interest': interest_component,
-                    'balance': max(0, remaining_principal)
+                yearly_schedule.append({
+                    'year': year,
+                    'opening_balance': year_opening_balance,
+                    'total_emi': year_total_emi,
+                    'total_principal': year_total_principal,
+                    'total_interest': year_total_interest,
+                    'closing_balance': max(0, remaining_principal)
                 })
             
             results = {
@@ -226,7 +245,7 @@ def emi_calc():
                 'emi': round(emi, 2),
                 'total_payment': round(total_payment, 2),
                 'total_interest': round(total_interest, 2),
-                'amortization_schedule': amortization_schedule
+                'yearly_schedule': yearly_schedule
             }
             
             return render_template('emi-calc.html', results=results)

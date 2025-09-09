@@ -135,27 +135,27 @@
                     </div>
                     {% endif %}
                     
-                    <div class="monthly-breakdown" style="margin-top: 20px;">
-                        <h3 style="color: #333; margin-bottom: 15px;">First Year Monthly Breakdown</h3>
+                    <div class="yearly-breakdown" style="margin-top: 20px;">
+                        <h3 style="color: #333; margin-bottom: 15px;">Year-wise Withdrawal Breakdown</h3>
                         <div style="overflow-x: auto;">
                             <table style="width: 100%; border-collapse: collapse; font-size: 0.9em;">
                                 <thead>
                                     <tr style="background: #f8f9fa;">
-                                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Month</th>
+                                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Year</th>
                                         <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Opening Balance</th>
-                                        <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Interest</th>
-                                        <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Withdrawal</th>
+                                        <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Total Withdrawals</th>
+                                        <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Interest Earned</th>
                                         <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Closing Balance</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for month_data in results.monthly_details %}
+                                    {% for year_data in results.yearly_details %}
                                     <tr>
-                                        <td style="border: 1px solid #ddd; padding: 8px;">{{ month_data.month }}</td>
-                                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">₹{{ "{:,.0f}".format(month_data.opening_balance) }}</td>
-                                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">₹{{ "{:,.0f}".format(month_data.interest_earned) }}</td>
-                                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">₹{{ "{:,.0f}".format(month_data.withdrawal) }}</td>
-                                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">₹{{ "{:,.0f}".format(month_data.closing_balance) }}</td>
+                                        <td style="border: 1px solid #ddd; padding: 8px;">{{ year_data.year }}</td>
+                                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">₹{{ "{:,.0f}".format(year_data.opening_balance) }}</td>
+                                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">₹{{ "{:,.0f}".format(year_data.total_withdrawals) }}</td>
+                                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">₹{{ "{:,.0f}".format(year_data.total_interest) }}</td>
+                                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">₹{{ "{:,.0f}".format(year_data.closing_balance) }}</td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>
